@@ -1,14 +1,17 @@
 <template>
     <div class="date_picker">
-        <template v-for="(month, index) in dates" :key="index">
-            <div><b>{{ months[index] }}, {{ dates[index][0].getFullYear() }}</b></div>
+        <template v-for="(month, index) in rangeDates" :key="index">
+            <div>{{ month.monthStr }}</div>
             <div class="dates">
-                <template v-for="(date, i) in dates[index]" :key="i">
-                    <button @click="$emit('activeDate', date); activeDate = date" :class="{'active': activeDate == date }" class="date" :disabled="activeDate == date">
+                <template v-for="(date, i) in rangeDates[index].dates" :key="i">
+                    <button
+                        @click="$emit('activeDate', date[0]); activeDate = date[0]"
+                        :class="{'active': activeDate === date[0] }"
+                        class="date" :disabled="activeDate === date[0]">
                         <div class='flex items-center px-4 py-4'>
                             <div class='text-center'>
-                                <p> {{ days[date.getDay()] }} </p>
-                                <p> {{ date.getDate() }} </p>
+                                <p> {{ date[1] }} </p>
+                                <p> {{ date[2] }} </p>
                             </div>
                         </div>
                     </button>
@@ -22,35 +25,39 @@ import {ref} from "vue";
 export default {
     emits: ['activeDate'],
     setup() {
-        function getDatesInRange(startDate, endDate) {
-            const date = new Date(startDate.getTime());
-            const dates = []
-            let result = {}
-            while (date < endDate) {
-                dates.push(new Date(date))
+        function getDatesInRange(limit = 7) {
+            const date = new Date()
+            const endDate = new Date().setDate(
+                date.getDate() + limit
+            )
+            const dates = {}
+            const days = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб']
+            const months = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
+            while (date < endDate ) {
+                const day = date.getDay()
+                const month = date.getUTCMonth()
+                const dateStr = date.toLocaleDateString()
+                const dayStr = days[day]
+                const monthStr = months[month]
+                if(dates[month] === undefined){
+                    dates[month] = {
+                        monthStr,
+                        "dates": []
+                    }
+                }
+                dates[month]['dates'].push([
+                    dateStr,
+                    dayStr,
+                    date.getDate()
+                ])
                 date.setDate(date.getDate() + 1)
             }
-            dates.map(x => {
-                let month = x.getUTCMonth()
-                if(result[month] === undefined){
-                    result[month] = []
-                }
-                result[month].push(x)
-            });
-            return result
+            return dates
         }
-        const days = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб']
-        const months = ['Январь','Февраль','Март','Апрель','Май','Июнь',
-            'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
-        const date = new Date()
-        const endDate = new Date().setDate(date.getDate() + 14)
-        const dates = getDatesInRange(date, endDate)
-        let activeDate = ref(dates[Object.keys(dates)[0]][0])
         return {
-            days,
-            months,
-            dates,
-            activeDate
+            rangeDates: getDatesInRange(14),
+            activeDate: ref(new Date().toLocaleDateString())
         }
     },
 }
