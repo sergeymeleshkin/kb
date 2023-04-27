@@ -9,7 +9,6 @@
     </div>
 </template>
 <script>
-// import { watch, ref } from 'vue'
 export default {
     props: {
         num: {
@@ -21,11 +20,5 @@ export default {
             default: null,
         },
     },
-    // setup(props) {
-    //     const step = ref(props.step)
-    //     return {
-    //         isActive,
-    //     }
-    // },
 }
 </script>

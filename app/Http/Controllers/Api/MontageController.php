@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Service;
 use Carbon\Carbon;
-use http\Env\Response;
-use Illuminate\Http\Request;
 
 class MontageController extends Controller
 {
@@ -26,16 +24,15 @@ class MontageController extends Controller
 
     public function enroll(){
         $params = Request()->all();
+        $datetime = Carbon::parse(implode(', ',[$params['date'],$params['time']]));
         $service = Service::where('id', $params['service_id'])->first();
-        if($service->bookings()->where('datetime',
-            Carbon::parse($params['dateStr'])
-        )->count()){
+        if($service->bookings()->where('datetime', $datetime)->count()){
             return Response()->json('Указанное время недоступно!');
         }
         $booking = Booking::create([
             'name'      => $params['name'],
             'tel'       => $params['tel'],
-            'datetime'  => Carbon::parse($params['dateStr'])
+            'datetime'  => $datetime
         ]);
         $service->bookings()->attach([$booking->id]);
         return Response()->json('Создана запись c id: '.$booking->id);

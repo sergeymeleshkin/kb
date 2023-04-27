@@ -5,13 +5,13 @@
             <div class="dates">
                 <template v-for="(date, i) in rangeDates[index].dates" :key="i">
                     <button
-                        @click="$emit('activeDate', date[0]); activeDate = date[0]"
+                        @click="$emit('datepicker', date[0]); activeDate = date[0]"
                         :class="{'active': activeDate === date[0] }"
-                        class="date" :disabled="activeDate === date[0]">
+                        class="date">
                         <div class='flex items-center px-4 py-4'>
                             <div class='text-center'>
                                 <p> {{ date[1] }} </p>
-                                <p> {{ date[2] }} </p>
+                                <p> {{ date[3] }} </p>
                             </div>
                         </div>
                     </button>
@@ -23,7 +23,7 @@
 <script>
 import {ref} from "vue";
 export default {
-    emits: ['activeDate'],
+    emits: ['datepicker'],
     setup() {
         function getDatesInRange(limit = 7) {
             const date = new Date()
@@ -37,7 +37,7 @@ export default {
             while (date < endDate ) {
                 const day = date.getDay()
                 const month = date.getUTCMonth()
-                const dateStr = date.toLocaleDateString()
+                const dateStr = date.toDateString()
                 const dayStr = days[day]
                 const monthStr = months[month]
                 if(dates[month] === undefined){
@@ -49,6 +49,7 @@ export default {
                 dates[month]['dates'].push([
                     dateStr,
                     dayStr,
+                    day,
                     date.getDate()
                 ])
                 date.setDate(date.getDate() + 1)

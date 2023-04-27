@@ -20,7 +20,7 @@ body {
 h1 {
     @apply text-2xl uppercase font-bold
 }
-.disabled {
+.disabled, [disabled] {
     @apply pointer-events-none cursor-default opacity-30
 }
 input.form-control {
@@ -66,4 +66,7 @@ input.form-control {
 }
 .time_picker .time {
     @apply rounded-lg text-center py-2 cursor-pointer border rounded-lg
+}
+ul [type="radio"] {
+    @apply h-8 w-8 rounded-full border-amber-400 text-amber-500 focus:ring-amber-500
 }
